@@ -19,7 +19,7 @@ Fossil is a CLI tool that excavates buried technical debt from codebases by extr
 ### From Source
 
 ```bash
-git clone https://github.com/yourusername/fossil.git
+git clone https://github.com/JRedrupp/fossil.git
 cd fossil
 cargo build --release
 sudo cp target/release/fossil /usr/local/bin/
