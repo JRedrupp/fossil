@@ -1,11 +1,11 @@
 [package]
 name = "fossil"
 version = "0.1.0"
-edition = "2021"
-authors = ["Jake"]
+edition = "2025"
+authors = ["Jake Redrupp"]
 description = "Unearth your technical debt - CLI tool for tracking TODO, FIXME, and other debt markers"
 license = "MIT"
-repository = "https://github.com/yourusername/fossil"
+repository = "https://github.com/JRedruppe/fossil"
 
 [dependencies]
 # CLI parsing
