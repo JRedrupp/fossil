@@ -96,20 +96,13 @@ fn scan_file(path: &Path, pattern: &Regex, context_lines: usize) -> Result<Vec<D
             }
         }
 
-        // Maintain a rolling buffer of previous lines for context
-        line_buffer.push_back((line_number, line.clone()));
-        if line_buffer.len() > context_lines {
-            line_buffer.pop_front();
-        }
-
         // Check if this line contains a marker
         if let Some(captures) = pattern.captures(&line) {
             let marker_type = captures.get(1).map(|m| m.as_str().to_string()).unwrap_or_default();
 
-            // Extract context before (from buffer)
+            // Extract context before (from buffer, before adding current line)
             let context_before: Vec<String> = line_buffer
                 .iter()
-                .take(line_buffer.len().saturating_sub(1)) // Exclude current line
                 .map(|(_, l)| l.clone())
                 .collect();
 
@@ -132,6 +125,12 @@ fn scan_file(path: &Path, pattern: &Regex, context_lines: usize) -> Result<Vec<D
 
             // Clear buffer to avoid including marker line in next context
             line_buffer.clear();
+        } else {
+            // Only add to buffer if this wasn't a marker line
+            line_buffer.push_back((line_number, line.clone()));
+            if line_buffer.len() > context_lines {
+                line_buffer.pop_front();
+            }
         }
     }
 

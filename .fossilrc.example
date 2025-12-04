@@ -1,0 +1,51 @@
+# Fossil Configuration Example
+# Copy this file to .fossilrc in your project root or ~/.fossilrc in your home directory
+
+# Debt markers to search for in code comments
+# Default: ["TODO", "FIXME", "HACK", "XXX", "NOTE"]
+markers = [
+    "TODO",
+    "FIXME",
+    "HACK",
+    "XXX",
+    "NOTE",
+    "BUG",
+    "OPTIMIZE",
+    "REFACTOR"
+]
+
+# Directories to ignore during scanning
+# These are in addition to patterns in .gitignore
+ignored_dirs = [
+    ".git",
+    "node_modules",
+    "target",           # Rust build directory
+    "dist",
+    "build",
+    ".venv",            # Python virtual environment
+    "venv",
+    "vendor",           # Go/PHP dependencies
+    ".next",            # Next.js build
+    "__pycache__",      # Python cache
+    ".pytest_cache",
+    "coverage",
+    ".idea",            # JetBrains IDEs
+    ".vscode",          # VS Code
+    "tmp",
+    "temp"
+]
+
+# Number of context lines to capture before and after each marker
+# Default: 2
+context_lines = 2
+
+# Optional: Map markers to severity levels
+# This is informational only - doesn't affect scanning
+[severity]
+FIXME = "high"
+HACK = "high"
+BUG = "critical"
+TODO = "medium"
+OPTIMIZE = "medium"
+REFACTOR = "low"
+NOTE = "low"
