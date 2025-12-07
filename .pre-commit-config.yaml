@@ -1,0 +1,16 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+  - repo: https://github.com/doublify/pre-commit-rust
+    rev: v1.0
+    hooks:
+      - id: fmt
+        name: cargo fmt
+        description: Format Rust code with cargo fmt
+      - id: cargo-check
+        name: cargo check
+        description: Check Rust code with cargo check
+      - id: clippy
+        name: cargo clippy
+        description: Lint Rust code with clippy
+        args: ['--all-targets', '--', '-D', 'warnings']

@@ -212,7 +212,6 @@ mod tests {
     use super::*;
     use crate::models::{DebtMarker, GitBlameInfo};
     use chrono::Utc;
-    use std::collections::HashMap;
     use std::path::PathBuf;
 
     fn create_test_report() -> DebtReport {

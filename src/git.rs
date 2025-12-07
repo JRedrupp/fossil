@@ -63,7 +63,7 @@ pub fn blame_line(
 
     // Get commit time
     let commit_time_secs = commit.time().seconds();
-    let commit_time = DateTime::from_timestamp(commit_time_secs, 0).unwrap_or_else(|| Utc::now());
+    let commit_time = DateTime::from_timestamp(commit_time_secs, 0).unwrap_or_else(Utc::now);
 
     // Calculate age in days
     let now = Utc::now();
@@ -90,10 +90,7 @@ pub fn enrich_with_git_info(
 ) -> Option<GitBlameInfo> {
     let repo = repo?;
 
-    match blame_line(repo, file_path, line_number) {
-        Ok(info) => info,
-        Err(_) => None, // Silently fail - not all files may be in git
-    }
+    blame_line(repo, file_path, line_number).unwrap_or_default()
 }
 
 #[cfg(test)]
