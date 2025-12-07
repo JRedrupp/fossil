@@ -43,8 +43,8 @@ Output:
 ```
 ╭──────────────────────────────────────────────────────────╮
 │              Fossil - Technical Debt Report              │
-│ Scanned: .                                                │
-│ Total Markers: 47                                          │
+│ Scanned: .                                               │
+│ Total Markers: 47                                        │
 ╰──────────────────────────────────────────────────────────╯
 
 Summary by Type:
