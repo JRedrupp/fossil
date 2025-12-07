@@ -24,6 +24,13 @@ pub fn blame_line(
         .strip_prefix(workdir)
         .unwrap_or(file_path);
 
+    // Remove leading "./" if present - git2 doesn't accept paths starting with "."
+    let relative_path_str = relative_path.to_str()
+        .context("Invalid UTF-8 in file path")?;
+    let cleaned_path = relative_path_str.strip_prefix("./")
+        .unwrap_or(relative_path_str);
+    let relative_path = Path::new(cleaned_path);
+
     // Create blame options
     let mut opts = BlameOptions::new();
     opts.track_copies_same_file(true)
