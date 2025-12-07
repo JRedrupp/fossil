@@ -4,6 +4,22 @@ This document tracks potential features and improvements for future versions of 
 
 ## High Priority
 
+### Output Format Enhancements
+
+#### Compact JSON Flag
+- Add `--compact-json` flag for minified JSON output
+- Currently JSON is always pretty-printed with `to_string_pretty()`
+- Useful for piping to other tools or reducing output size
+- Simple implementation: add boolean parameter to `format_json()`
+
+#### Sort Order Control
+- Add `--sort-by` flag to control sort order for terminal/markdown output
+- Options: `age` (default), `author`, `type`, `file`
+- Add `SortOrder` enum in `models.rs`
+- Add `sorted_markers()` method to `DebtReport`
+- Update `format_terminal()` and `format_markdown()` to accept sort parameter
+- Update table headers dynamically based on sort order
+
 ### Historical Tracking (`fossil history`)
 - Store debt snapshots over time in `.fossil/` directory
 - Show trends: debt increasing or decreasing?
