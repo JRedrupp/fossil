@@ -5,17 +5,27 @@ use comfy_table::{Cell, Color, ContentArrangement, Table, presets::UTF8_FULL};
 use std::fs;
 use std::path::Path;
 
+/// Format report as count only
+fn format_count_only(report: &DebtReport) -> String {
+    report.total_count.to_string()
+}
+
 /// Generate and output a report in the specified format
 pub fn generate_report(
     report: &DebtReport,
     format: OutputFormat,
     output_path: Option<&Path>,
     top_n: usize,
+    count_only: bool,
 ) -> Result<()> {
-    let output = match format {
-        OutputFormat::Terminal => format_terminal(report, top_n),
-        OutputFormat::Markdown => format_markdown(report, top_n),
-        OutputFormat::Json => format_json(report)?,
+    let output = if count_only {
+        format_count_only(report)
+    } else {
+        match format {
+            OutputFormat::Terminal => format_terminal(report, top_n),
+            OutputFormat::Markdown => format_markdown(report, top_n),
+            OutputFormat::Json => format_json(report)?,
+        }
     };
 
     if let Some(path) = output_path {

@@ -49,6 +49,10 @@ pub struct ScanArgs {
     #[arg(long, default_value = "10")]
     pub top: usize,
 
+    /// Show only the total count of markers
+    #[arg(long)]
+    pub count_only: bool,
+
     /// Enable verbose output
     #[arg(short, long)]
     pub verbose: bool,

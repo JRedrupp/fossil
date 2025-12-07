@@ -4,8 +4,6 @@ This document tracks potential features and improvements for future versions of 
 
 ## High Priority
 
-### Add Pre-Commit
-
 ### Historical Tracking (`fossil history`)
 - Store debt snapshots over time in `.fossil/` directory
 - Show trends: debt increasing or decreasing?
@@ -263,4 +261,4 @@ Features will be prioritized based on:
 
 ---
 
-**Last Updated**: 2025-12-04
+**Last Updated**: 2025-12-07

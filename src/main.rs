@@ -80,8 +80,14 @@ fn scan_command(args: cli::ScanArgs) -> Result<()> {
     let report = models::DebtReport::new(markers, args.path.clone());
 
     // Output report
-    reporter::generate_report(&report, args.format, args.output.as_deref(), args.top)
-        .context("Failed to generate report")?;
+    reporter::generate_report(
+        &report,
+        args.format,
+        args.output.as_deref(),
+        args.top,
+        args.count_only,
+    )
+    .context("Failed to generate report")?;
 
     Ok(())
 }
