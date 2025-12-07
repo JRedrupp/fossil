@@ -37,8 +37,8 @@ fn format_terminal(report: &DebtReport, top_n: usize) -> String {
     let line = "─".repeat(58);
     output.push_str(&format!("╭{}╮\n", line));
     output.push_str(&format!("│ {:^56} │\n", "Fossil - Technical Debt Report"));
-    output.push_str(&format!("│ Scanned: {:<48} │\n", report.scan_path.display()));
-    output.push_str(&format!("│ Total Markers: {:<43} │\n", report.total_count));
+    output.push_str(&format!("│ Scanned: {:<47} │\n", report.scan_path.display()));
+    output.push_str(&format!("│ Total Markers: {:<41} │\n", report.total_count));
     output.push_str(&format!("╰{}╯\n\n", line));
 
     // Summary by type
