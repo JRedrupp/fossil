@@ -1,7 +1,7 @@
 use crate::cli::OutputFormat;
 use crate::models::DebtReport;
 use anyhow::{Context, Result};
-use comfy_table::{presets::UTF8_FULL, Cell, Color, ContentArrangement, Table};
+use comfy_table::{Cell, Color, ContentArrangement, Table, presets::UTF8_FULL};
 use std::fs;
 use std::path::Path;
 
@@ -37,7 +37,10 @@ fn format_terminal(report: &DebtReport, top_n: usize) -> String {
     let line = "─".repeat(58);
     output.push_str(&format!("╭{}╮\n", line));
     output.push_str(&format!("│ {:^56} │\n", "Fossil - Technical Debt Report"));
-    output.push_str(&format!("│ Scanned: {:<47} │\n", report.scan_path.display()));
+    output.push_str(&format!(
+        "│ Scanned: {:<47} │\n",
+        report.scan_path.display()
+    ));
     output.push_str(&format!("│ Total Markers: {:<41} │\n", report.total_count));
     output.push_str(&format!("╰{}╯\n\n", line));
 
@@ -127,7 +130,10 @@ fn format_markdown(report: &DebtReport, top_n: usize) -> String {
     output.push_str("# Fossil - Technical Debt Report\n\n");
     output.push_str(&format!("**Scanned**: `{}`\n", report.scan_path.display()));
     output.push_str(&format!("**Total Markers**: {}\n", report.total_count));
-    output.push_str(&format!("**Generated**: {}\n\n", report.scan_time.format("%Y-%m-%d %H:%M:%S UTC")));
+    output.push_str(&format!(
+        "**Generated**: {}\n\n",
+        report.scan_time.format("%Y-%m-%d %H:%M:%S UTC")
+    ));
 
     // Summary by type
     if !report.by_type.is_empty() {
@@ -169,7 +175,11 @@ fn format_markdown(report: &DebtReport, top_n: usize) -> String {
                 marker.line_number
             ));
             output.push_str(&format!("   - Author: {}\n", git_info.author));
-            output.push_str(&format!("   - Age: {} ({} days)\n", git_info.age_display(), git_info.age_days));
+            output.push_str(&format!(
+                "   - Age: {} ({} days)\n",
+                git_info.age_display(),
+                git_info.age_days
+            ));
             output.push_str(&format!("   - Commit: {}\n", git_info.commit_hash));
             output.push_str(&format!("   - Line: `{}`\n", marker.line_content.trim()));
 

@@ -56,8 +56,7 @@ fn get_home_config_path() -> Option<PathBuf> {
 
 /// Save a config to a file (useful for creating example configs)
 pub fn save_config(config: &Config, path: &Path) -> Result<()> {
-    let toml_string = toml::to_string_pretty(config)
-        .context("Failed to serialize config")?;
+    let toml_string = toml::to_string_pretty(config).context("Failed to serialize config")?;
 
     fs::write(path, toml_string)
         .with_context(|| format!("Failed to write config to {}", path.display()))?;
@@ -68,8 +67,8 @@ pub fn save_config(config: &Config, path: &Path) -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use tempfile::NamedTempFile;
     use std::io::Write;
+    use tempfile::NamedTempFile;
 
     #[test]
     fn test_load_default_config() {

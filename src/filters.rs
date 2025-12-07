@@ -1,5 +1,5 @@
 use crate::models::DebtMarker;
-use anyhow::{anyhow, Context, Result};
+use anyhow::{Context, Result, anyhow};
 use std::time::Duration;
 
 /// Filter markers by minimum age
@@ -66,7 +66,12 @@ fn parse_duration(s: &str) -> Result<Duration> {
         "w" => num * 7,
         "m" => num * 30,
         "y" => num * 365,
-        _ => return Err(anyhow!("Invalid duration unit: {}. Use d, w, m, or y", unit)),
+        _ => {
+            return Err(anyhow!(
+                "Invalid duration unit: {}. Use d, w, m, or y",
+                unit
+            ));
+        }
     };
 
     Ok(Duration::from_secs(days * 24 * 60 * 60))

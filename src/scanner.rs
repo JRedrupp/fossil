@@ -71,7 +71,8 @@ fn build_marker_regex(markers: &[String]) -> Result<Regex> {
 
 /// Scan a single file for debt markers
 fn scan_file(path: &Path, pattern: &Regex, context_lines: usize) -> Result<Vec<DebtMarker>> {
-    let file = File::open(path).with_context(|| format!("Failed to open file: {}", path.display()))?;
+    let file =
+        File::open(path).with_context(|| format!("Failed to open file: {}", path.display()))?;
     let reader = BufReader::new(file);
 
     let mut markers = Vec::new();
@@ -98,13 +99,13 @@ fn scan_file(path: &Path, pattern: &Regex, context_lines: usize) -> Result<Vec<D
 
         // Check if this line contains a marker
         if let Some(captures) = pattern.captures(&line) {
-            let marker_type = captures.get(1).map(|m| m.as_str().to_string()).unwrap_or_default();
+            let marker_type = captures
+                .get(1)
+                .map(|m| m.as_str().to_string())
+                .unwrap_or_default();
 
             // Extract context before (from buffer, before adding current line)
-            let context_before: Vec<String> = line_buffer
-                .iter()
-                .map(|(_, l)| l.clone())
-                .collect();
+            let context_before: Vec<String> = line_buffer.iter().map(|(_, l)| l.clone()).collect();
 
             let marker = DebtMarker {
                 marker_type,
@@ -147,7 +148,21 @@ pub fn is_likely_binary(path: &Path) -> bool {
     if let Some(ext) = path.extension().and_then(|e| e.to_str()) {
         matches!(
             ext.to_lowercase().as_str(),
-            "png" | "jpg" | "jpeg" | "gif" | "ico" | "pdf" | "zip" | "tar" | "gz" | "exe" | "dll" | "so" | "dylib" | "bin" | "dat"
+            "png"
+                | "jpg"
+                | "jpeg"
+                | "gif"
+                | "ico"
+                | "pdf"
+                | "zip"
+                | "tar"
+                | "gz"
+                | "exe"
+                | "dll"
+                | "so"
+                | "dylib"
+                | "bin"
+                | "dat"
         )
     } else {
         false
@@ -157,8 +172,8 @@ pub fn is_likely_binary(path: &Path) -> bool {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use tempfile::TempDir;
     use std::io::Write;
+    use tempfile::TempDir;
 
     #[test]
     fn test_build_marker_regex() {

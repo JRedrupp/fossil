@@ -19,15 +19,17 @@ pub fn blame_line(
     line_number: usize,
 ) -> Result<Option<GitBlameInfo>> {
     // Get the file path relative to the repository root
-    let workdir = repo.workdir().context("Repository has no working directory")?;
-    let relative_path = file_path
-        .strip_prefix(workdir)
-        .unwrap_or(file_path);
+    let workdir = repo
+        .workdir()
+        .context("Repository has no working directory")?;
+    let relative_path = file_path.strip_prefix(workdir).unwrap_or(file_path);
 
     // Remove leading "./" if present - git2 doesn't accept paths starting with "."
-    let relative_path_str = relative_path.to_str()
+    let relative_path_str = relative_path
+        .to_str()
         .context("Invalid UTF-8 in file path")?;
-    let cleaned_path = relative_path_str.strip_prefix("./")
+    let cleaned_path = relative_path_str
+        .strip_prefix("./")
         .unwrap_or(relative_path_str);
     let relative_path = Path::new(cleaned_path);
 
@@ -61,8 +63,7 @@ pub fn blame_line(
 
     // Get commit time
     let commit_time_secs = commit.time().seconds();
-    let commit_time = DateTime::from_timestamp(commit_time_secs, 0)
-        .unwrap_or_else(|| Utc::now());
+    let commit_time = DateTime::from_timestamp(commit_time_secs, 0).unwrap_or_else(|| Utc::now());
 
     // Calculate age in days
     let now = Utc::now();
