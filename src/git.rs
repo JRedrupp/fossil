@@ -22,7 +22,15 @@ pub fn blame_line(
     let workdir = repo
         .workdir()
         .context("Repository has no working directory")?;
-    let relative_path = file_path.strip_prefix(workdir).unwrap_or(file_path);
+
+    // Canonicalize the file path to handle .. and . in the path
+    let canonical_path = file_path
+        .canonicalize()
+        .with_context(|| format!("Failed to canonicalize path: {}", file_path.display()))?;
+
+    let relative_path = canonical_path
+        .strip_prefix(workdir)
+        .unwrap_or(&canonical_path);
 
     // Remove leading "./" if present - git2 doesn't accept paths starting with "."
     let relative_path_str = relative_path
