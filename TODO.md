@@ -2,11 +2,6 @@
 
 This document tracks potential features and improvements for future versions of Fossil.
 
-## Critical Priority
-
-### Performance Issue on large repositorys
-I think that due to the fact that we git blame every line with a todo, rather than having a cache for each file's blame data, we are leaving a lot of performance on the table here.
-
 ## High Priority
 
 ### Output Format Enhancements
@@ -282,4 +277,4 @@ Features will be prioritized based on:
 
 ---
 
-**Last Updated**: 2025-12-07
+**Last Updated**: 2025-12-08
