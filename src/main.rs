@@ -31,7 +31,18 @@ fn scan_command(args: cli::ScanArgs) -> Result<()> {
         scanner::scan_directory(&args.path, &config).context("Failed to scan directory")?;
 
     if args.verbose {
-        println!("Found {} markers before git enrichment", markers.len());
+        println!("Found {} markers before filtering", markers.len());
+    }
+
+    // Apply type filter first (before git enrichment to reduce work)
+    if let Some(ref marker_type) = args.marker_type {
+        if args.verbose {
+            println!("Filtering by type: {}", marker_type);
+        }
+        markers = filters::filter_by_type(markers, marker_type);
+        if args.verbose {
+            println!("Markers after type filter: {}", markers.len());
+        }
     }
 
     // Enrich with git blame information
@@ -45,12 +56,9 @@ fn scan_command(args: cli::ScanArgs) -> Result<()> {
         }
     }
 
-    for marker in &mut markers {
-        marker.git_info =
-            git::enrich_with_git_info(repo.as_ref(), &marker.file_path, marker.line_number);
-    }
+    git::enrich_markers_batch(&mut markers, repo.as_ref())?;
 
-    // Apply filters
+    // Apply filters that require git data
     if let Some(ref older_than) = args.older_than {
         if args.verbose {
             println!("Filtering by age: {}", older_than);
@@ -63,13 +71,6 @@ fn scan_command(args: cli::ScanArgs) -> Result<()> {
             println!("Filtering by author: {}", author);
         }
         markers = filters::filter_by_author(markers, author);
-    }
-
-    if let Some(ref marker_type) = args.marker_type {
-        if args.verbose {
-            println!("Filtering by type: {}", marker_type);
-        }
-        markers = filters::filter_by_type(markers, marker_type);
     }
 
     if args.verbose {
