@@ -17,6 +17,9 @@ git2 = "0.18"
 # File traversal
 ignore = "0.4"
 
+# Parallelism
+rayon = "1.10"
+
 # Pattern matching
 regex = "1.10"
 

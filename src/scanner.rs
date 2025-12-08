@@ -6,15 +6,18 @@ use std::collections::VecDeque;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::path::Path;
+use std::sync::{Arc, Mutex};
 
 const MAX_FILE_SIZE: u64 = 10 * 1024 * 1024; // 10MB
 
 /// Scan a directory for technical debt markers
 pub fn scan_directory(path: &Path, config: &Config) -> Result<Vec<DebtMarker>> {
-    let mut markers = Vec::new();
-
     // Build regex pattern from config markers
-    let pattern = build_marker_regex(&config.markers)?;
+    let pattern = Arc::new(build_marker_regex(&config.markers)?);
+    let context_lines = config.context_lines;
+
+    // Thread-safe vector to collect markers
+    let markers = Arc::new(Mutex::new(Vec::new()));
 
     // Build the file walker
     let mut walker = WalkBuilder::new(path);
@@ -27,30 +30,49 @@ pub fn scan_directory(path: &Path, config: &Config) -> Result<Vec<DebtMarker>> {
         !ignored_dirs.iter().any(|ignored| ignored == name)
     });
 
-    // Walk the directory tree
-    for result in walker.build() {
-        let entry = match result {
-            Ok(entry) => entry,
-            Err(_) => continue, // Skip files we can't read
-        };
+    // Walk the directory tree in parallel
+    walker.build_parallel().run(|| {
+        let pattern = Arc::clone(&pattern);
+        let markers = Arc::clone(&markers);
 
-        // Skip directories
-        if entry.file_type().map(|ft| ft.is_dir()).unwrap_or(false) {
-            continue;
-        }
+        Box::new(move |result| {
+            use ignore::WalkState;
 
-        // Skip if file is too large
-        if let Ok(metadata) = entry.metadata() {
-            if metadata.len() > MAX_FILE_SIZE {
-                continue;
+            let entry = match result {
+                Ok(entry) => entry,
+                Err(_) => return WalkState::Continue,
+            };
+
+            // Skip directories
+            if entry.file_type().map(|ft| ft.is_dir()).unwrap_or(false) {
+                return WalkState::Continue;
             }
-        }
 
-        // Scan the file for markers
-        if let Ok(file_markers) = scan_file(entry.path(), &pattern, config.context_lines) {
-            markers.extend(file_markers);
-        }
-    }
+            // Skip if file is too large
+            if let Ok(metadata) = entry.metadata() {
+                if metadata.len() > MAX_FILE_SIZE {
+                    return WalkState::Continue;
+                }
+            }
+
+            // Scan the file for markers
+            if let Ok(file_markers) = scan_file(entry.path(), &pattern, context_lines) {
+                if !file_markers.is_empty() {
+                    if let Ok(mut markers) = markers.lock() {
+                        markers.extend(file_markers);
+                    }
+                }
+            }
+
+            WalkState::Continue
+        })
+    });
+
+    // Extract the markers from the Arc<Mutex<>>
+    let markers = Arc::try_unwrap(markers)
+        .map_err(|_| anyhow::anyhow!("Failed to unwrap markers"))?
+        .into_inner()
+        .map_err(|_| anyhow::anyhow!("Failed to extract markers"))?;
 
     Ok(markers)
 }
@@ -73,24 +95,36 @@ fn build_marker_regex(markers: &[String]) -> Result<Regex> {
 fn scan_file(path: &Path, pattern: &Regex, context_lines: usize) -> Result<Vec<DebtMarker>> {
     let file =
         File::open(path).with_context(|| format!("Failed to open file: {}", path.display()))?;
-    let reader = BufReader::new(file);
+    let mut reader = BufReader::new(file);
 
     let mut markers = Vec::new();
-    let mut line_buffer: VecDeque<(usize, String)> = VecDeque::new();
+    let mut line_buffer: VecDeque<String> = VecDeque::new();
     let mut lines_after_marker: Option<(DebtMarker, usize)> = None;
 
-    for (line_num, line_result) in reader.lines().enumerate() {
-        let line = match line_result {
-            Ok(l) => l,
-            Err(_) => continue, // Skip lines we can't read (might be binary)
+    // Reusable byte buffer
+    let mut byte_buffer = Vec::with_capacity(256);
+    let mut line_number = 0;
+
+    loop {
+        byte_buffer.clear();
+        match reader.read_until(b'\n', &mut byte_buffer) {
+            Ok(0) => break, // EOF
+            Ok(_) => {}
+            Err(_) => break, // I/O error, stop reading this file
         };
 
-        let line_number = line_num + 1; // Convert to 1-indexed
+        line_number += 1;
+
+        // Try to convert to UTF-8 string (skip line if invalid)
+        let line = match std::str::from_utf8(&byte_buffer) {
+            Ok(s) => s.trim_end_matches('\n').trim_end_matches('\r'),
+            Err(_) => continue, // Skip non-UTF-8 lines (binary data)
+        };
 
         // If we're collecting context after a marker
         if let Some((mut marker, remaining)) = lines_after_marker.take() {
             if remaining > 0 {
-                marker.context_after.push(line.clone());
+                marker.context_after.push(line.to_string());
                 lines_after_marker = Some((marker, remaining - 1));
             } else {
                 markers.push(marker);
@@ -98,20 +132,20 @@ fn scan_file(path: &Path, pattern: &Regex, context_lines: usize) -> Result<Vec<D
         }
 
         // Check if this line contains a marker
-        if let Some(captures) = pattern.captures(&line) {
+        if let Some(captures) = pattern.captures(line) {
             let marker_type = captures
                 .get(1)
                 .map(|m| m.as_str().to_string())
                 .unwrap_or_default();
 
-            // Extract context before (from buffer, before adding current line)
-            let context_before: Vec<String> = line_buffer.iter().map(|(_, l)| l.clone()).collect();
+            // Extract context before (from buffer)
+            let context_before: Vec<String> = line_buffer.iter().cloned().collect();
 
             let marker = DebtMarker {
                 marker_type,
                 file_path: path.to_path_buf(),
                 line_number,
-                line_content: line.clone(),
+                line_content: line.to_string(),
                 context_before,
                 context_after: Vec::new(),
                 git_info: None, // Will be filled in by git module
@@ -128,9 +162,12 @@ fn scan_file(path: &Path, pattern: &Regex, context_lines: usize) -> Result<Vec<D
             line_buffer.clear();
         } else {
             // Only add to buffer if this wasn't a marker line
-            line_buffer.push_back((line_number, line.clone()));
-            if line_buffer.len() > context_lines {
-                line_buffer.pop_front();
+            // Only allocate String when we need to save for context
+            if context_lines > 0 {
+                line_buffer.push_back(line.to_string());
+                if line_buffer.len() > context_lines {
+                    line_buffer.pop_front();
+                }
             }
         }
     }
