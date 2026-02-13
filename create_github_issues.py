@@ -36,7 +36,11 @@ def create_issue(token: str, issue_data: Dict) -> Dict:
     # Extract labels - handle both string and list format
     labels = issue_data.get("labels", [])
     if isinstance(labels, str):
-        labels = eval(labels)
+        try:
+            labels = json.loads(labels)
+        except json.JSONDecodeError:
+            print(f"Warning: Could not parse labels for '{issue_data['title']}'")
+            labels = []
     
     payload = {
         "title": issue_data["title"],
@@ -86,7 +90,10 @@ def main():
             print(f"{i}. {issue['title']}")
             labels = issue.get("labels", [])
             if isinstance(labels, str):
-                labels = eval(labels)
+                try:
+                    labels = json.loads(labels)
+                except json.JSONDecodeError:
+                    labels = []
             print(f"   Labels: {', '.join(labels)}")
             print()
         return

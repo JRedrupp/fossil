@@ -54,8 +54,8 @@ The script will create **40 GitHub issues** with:
 
 ## Important Notes
 
-- The scripts are idempotent-safe - they will create new issues each time you run them
-- If you want to test first, use `--dry-run` flag to see what would be created
+- **Warning**: The scripts will create new issues each time they are run. Only run them once to avoid creating duplicate issues.
+- If you want to test first, use `--dry-run` flag to see what would be created without actually creating issues
 - You may want to create the label categories in your repository first (see MIGRATION_README.md)
 
 ## Verification
