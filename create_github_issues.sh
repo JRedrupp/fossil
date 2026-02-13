@@ -64,15 +64,18 @@ for i in $(seq 0 $((TOTAL - 1))); do
     echo -n "Creating issue $((i + 1))/$TOTAL: $TITLE... "
     
     # Create the issue
-    if gh issue create \
+    ERROR_OUTPUT=$(gh issue create \
         --repo "$REPO" \
         --title "$TITLE" \
         --body "$BODY" \
-        --label "$LABELS" > /dev/null 2>&1; then
+        --label "$LABELS" 2>&1)
+    
+    if [ $? -eq 0 ]; then
         echo "✓"
         ((CREATED++))
     else
         echo "✗ Failed"
+        echo "  Error: $ERROR_OUTPUT"
         ((FAILED++))
     fi
 done
