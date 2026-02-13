@@ -1,6 +1,11 @@
 # Fossil - Future Development Roadmap
 
-This document tracks potential features and improvements for future versions of Fossil.
+> **Note**: This TODO list has been migrated to GitHub Issues for better tracking and collaboration.
+> See [MIGRATION_README.md](MIGRATION_README.md) for instructions on creating the issues.
+> 
+> All features below are being tracked as GitHub issues at: https://github.com/JRedrupp/fossil/issues
+
+This document serves as a reference for the complete feature roadmap. For active tracking, discussions, and prioritization, please use GitHub Issues.
 
 ## High Priority
 

@@ -1,0 +1,202 @@
+[
+  {
+    "title": "Add Compact JSON Flag for Minified Output",
+    "body": "### Description\nAdd `--compact-json` flag for minified JSON output\n\n### Details\n- Currently JSON is always pretty-printed with `to_string_pretty()`\n- Useful for piping to other tools or reducing output size\n- Simple implementation: add boolean parameter to `format_json()`\n\n### Priority\nHigh",
+    "labels": ["enhancement", "high-priority", "output-format"]
+  },
+  {
+    "title": "Add Sort Order Control for Terminal/Markdown Output",
+    "body": "### Description\nAdd `--sort-by` flag to control sort order for terminal/markdown output\n\n### Details\n- Options: `age` (default), `author`, `type`, `file`\n- Add `SortOrder` enum in `models.rs`\n- Add `sorted_markers()` method to `DebtReport`\n- Update `format_terminal()` and `format_markdown()` to accept sort parameter\n- Update table headers dynamically based on sort order\n\n### Priority\nHigh",
+    "labels": ["enhancement", "high-priority", "output-format"]
+  },
+  {
+    "title": "Historical Tracking (`fossil history`)",
+    "body": "### Description\nStore debt snapshots over time to track trends and velocity\n\n### Details\n- Store debt snapshots over time in `.fossil/` directory\n- Show trends: debt increasing or decreasing?\n- Graph debt evolution with ASCII charts or export data for visualization\n- Track velocity: how quickly is debt being addressed?\n\n### Commands\n- `fossil history init` - Initialize tracking\n- `fossil history snapshot` - Take a snapshot\n- `fossil history show` - Display trend chart\n- `fossil history compare <date1> <date2>` - Compare two snapshots\n\n### Priority\nHigh",
+    "labels": ["enhancement", "high-priority", "feature"]
+  },
+  {
+    "title": "Add Progress Indicator for Large Scans",
+    "body": "### Description\nAdd progress bar for large scans using `indicatif` crate\n\n### Details\n- Show: files scanned, markers found, current file being processed\n- Estimated time remaining based on file count\n\n### Priority\nHigh",
+    "labels": ["enhancement", "high-priority", "ux"]
+  },
+  {
+    "title": "Multi-Directory Support",
+    "body": "### Description\nScan multiple directories in a single command\n\n### Details\n- `fossil scan dir1/ dir2/ dir3/`\n- Parallel scanning across directories\n- Aggregate report combining all scans\n\n### Priority\nHigh",
+    "labels": ["enhancement", "high-priority", "feature"]
+  },
+  {
+    "title": "Enhanced Filtering - By File Pattern",
+    "body": "### Description\nAdd file pattern filtering for scans\n\n### Details\n- `fossil scan --files=\"*.rs\"` - Only scan Rust files\n- `fossil scan --exclude=\"test/**\"` - Exclude test directories\n- Glob pattern support for fine-grained control\n\n### Priority\nMedium",
+    "labels": ["enhancement", "medium-priority", "filtering"]
+  },
+  {
+    "title": "Enhanced Filtering - By Date Range",
+    "body": "### Description\nFilter markers by date range\n\n### Details\n- `fossil scan --since=2024-01-01` - Only show markers added after date\n- `fossil scan --between=2024-01-01,2024-06-30` - Date range\n\n### Priority\nMedium",
+    "labels": ["enhancement", "medium-priority", "filtering"]
+  },
+  {
+    "title": "Enhanced Filtering - By Severity",
+    "body": "### Description\nFilter markers by configured severity levels\n\n### Details\n- `fossil scan --severity=high` - Filter by configured severity levels\n- `fossil scan --critical-only` - Show only critical markers\n\n### Priority\nMedium",
+    "labels": ["enhancement", "medium-priority", "filtering"]
+  },
+  {
+    "title": "GitHub Action Integration",
+    "body": "### Description\nPre-built GitHub Action for CI/CD\n\n### Details\n- Automatically comment on PRs with debt introduced\n- Fail builds if debt exceeds configured threshold\n\n### Example Usage\n```yaml\n- uses: fossil-action@v1\n  with:\n    fail-on-new-debt: true\n    max-debt: 50\n```\n\n### Priority\nMedium",
+    "labels": ["enhancement", "medium-priority", "github-integration", "ci-cd"]
+  },
+  {
+    "title": "GitHub Issues Integration",
+    "body": "### Description\nIntegrate with GitHub issues for marker management\n\n### Details\n- `fossil github create-issues` - Create GitHub issues from markers\n- Link markers to existing issues\n- Auto-close issues when markers are removed\n\n### Priority\nMedium",
+    "labels": ["enhancement", "medium-priority", "github-integration"]
+  },
+  {
+    "title": "HTML Report Generation",
+    "body": "### Description\nGenerate single-file HTML report with interactive features\n\n### Details\n- Sortable tables (by age, author, file, type)\n- Filterable views\n- Charts and visualizations (using Chart.js or similar)\n- Dark mode support\n- Export as static site for hosting\n\n### Priority\nMedium",
+    "labels": ["enhancement", "medium-priority", "output-format"]
+  },
+  {
+    "title": "Pre-commit Hook Support",
+    "body": "### Description\nProvide example pre-commit hook script\n\n### Details\n- Warn developers when adding new high-severity debt\n- Optional: block commits with certain marker types\n- Configurable threshold\n\n### Priority\nMedium",
+    "labels": ["enhancement", "medium-priority", "developer-experience"]
+  },
+  {
+    "title": "Language-Specific Intelligence",
+    "body": "### Description\nDetect TODO patterns specific to different programming languages\n\n### Details\n- Python: `# FIXME(author): description`\n- Java: `@todo` annotations\n- Rust: `todo!()` macro calls\n- TypeScript: `// @ts-ignore` with explanation\n- Extract assignee from patterns like `TODO(jake):`\n\n### Priority\nLow",
+    "labels": ["enhancement", "nice-to-have", "language-support"]
+  },
+  {
+    "title": "Diff Mode - Compare Scans",
+    "body": "### Description\n`fossil diff` - Compare current state with previous scan\n\n### Details\n- Show new debt added, old debt removed\n- Highlight changes since last commit/branch/tag\n\n### Priority\nLow",
+    "labels": ["enhancement", "nice-to-have", "feature"]
+  },
+  {
+    "title": "CSV Export Format",
+    "body": "### Description\nExport scan results to CSV format\n\n### Details\n- For importing into spreadsheets\n- Columns: Type, File, Line, Author, Age, Content\n\n### Priority\nLow",
+    "labels": ["enhancement", "nice-to-have", "export-format"]
+  },
+  {
+    "title": "SARIF Format Export",
+    "body": "### Description\nExport scan results in SARIF format\n\n### Details\n- For integration with GitHub Code Scanning\n- Industry-standard format for static analysis\n\n### Priority\nLow",
+    "labels": ["enhancement", "nice-to-have", "export-format", "github-integration"]
+  },
+  {
+    "title": "SQLite Database Export",
+    "body": "### Description\nExport scan results to SQLite database\n\n### Details\n- Export to SQLite for complex queries\n- Enable custom reporting and analysis\n\n### Priority\nLow",
+    "labels": ["enhancement", "nice-to-have", "export-format"]
+  },
+  {
+    "title": "AI-Powered Smart Categorization",
+    "body": "### Description\nUse LLM to categorize and analyze technical debt\n\n### Details\n- Use LLM to categorize debt by impact/effort\n- Suggest which TODOs to tackle first\n- Detect patterns in technical debt\n\n### Priority\nLow",
+    "labels": ["enhancement", "nice-to-have", "ai-powered"]
+  },
+  {
+    "title": "AI-Powered Auto-Documentation",
+    "body": "### Description\nGenerate documentation from markers\n\n### Details\n- Generate documentation from NOTE markers\n- Create API docs from TODO comments about missing features\n\n### Priority\nLow",
+    "labels": ["enhancement", "nice-to-have", "ai-powered", "documentation"]
+  },
+  {
+    "title": "Slack/Discord Integration",
+    "body": "### Description\nIntegrate with team communication platforms\n\n### Details\n- Post weekly debt reports to channels\n- Notify when debt exceeds thresholds\n- Celebrate debt reduction milestones\n\n### Priority\nLow",
+    "labels": ["enhancement", "nice-to-have", "integrations"]
+  },
+  {
+    "title": "Email Digest Notifications",
+    "body": "### Description\nSend email summaries of technical debt\n\n### Details\n- Weekly/monthly email summaries\n- Per-author debt reports\n- Team-wide debt metrics\n\n### Priority\nLow",
+    "labels": ["enhancement", "nice-to-have", "integrations"]
+  },
+  {
+    "title": "Incremental Scanning Performance Optimization",
+    "body": "### Description\nOptimize scanning by only scanning changed files\n\n### Details\n- Only scan changed files (using git diff)\n- Cache results for unchanged files\n- Dramatically faster re-scans\n\n### Priority\nLow",
+    "labels": ["enhancement", "nice-to-have", "performance"]
+  },
+  {
+    "title": "Distributed Scanning for Monorepos",
+    "body": "### Description\nSupport distributed scanning across multiple machines\n\n### Details\n- Split large repos across multiple machines\n- Aggregate results from distributed scans\n- For monorepo support\n\n### Priority\nLow",
+    "labels": ["enhancement", "nice-to-have", "performance", "monorepo"]
+  },
+  {
+    "title": "Advanced Git Blame Improvements",
+    "body": "### Description\nTrack when TODO was actually added vs when line was modified\n\n### Details\n- Track when TODO was actually added vs when line was modified\n- Use git log to find original TODO introduction\n- Show full commit message for context\n\n### Priority\nLow",
+    "labels": ["enhancement", "nice-to-have", "git-integration"]
+  },
+  {
+    "title": "Branch Comparison Feature",
+    "body": "### Description\nCompare debt between git branches\n\n### Details\n- `fossil compare main..feature-branch`\n- Show debt introduced in feature branch\n- Use in PR reviews\n\n### Priority\nLow",
+    "labels": ["enhancement", "nice-to-have", "git-integration"]
+  },
+  {
+    "title": "Global Ignore Patterns Configuration",
+    "body": "### Description\nDefine ignore patterns in config, not just directories\n\n### Details\n- `ignore_patterns = [\"*.generated.rs\", \"vendor/**\"]`\n\n### Priority\nLow",
+    "labels": ["enhancement", "nice-to-have", "configuration"]
+  },
+  {
+    "title": "Per-Directory Configuration Support",
+    "body": "### Description\nSupport `.fossilrc` in subdirectories\n\n### Details\n- Inherit and override parent configs\n- Useful for monorepos\n\n### Priority\nLow",
+    "labels": ["enhancement", "nice-to-have", "configuration", "monorepo"]
+  },
+  {
+    "title": "Team Configuration Presets",
+    "body": "### Description\nShareable config presets for teams\n\n### Details\n- `fossil init --preset=rust-team`\n- `fossil init --preset=javascript-strict`\n\n### Priority\nLow",
+    "labels": ["enhancement", "nice-to-have", "configuration"]
+  },
+  {
+    "title": "Watch Mode for Auto-Scanning",
+    "body": "### Description\n`fossil watch` - Auto-scan on file changes\n\n### Details\n- Live updates during development\n- Real-time debt tracking\n\n### Priority\nLow",
+    "labels": ["enhancement", "nice-to-have", "developer-experience"]
+  },
+  {
+    "title": "IDE Integration (VS Code, IntelliJ, etc.)",
+    "body": "### Description\nProvide IDE extensions for inline debt tracking\n\n### Details\n- VS Code extension showing debt inline\n- IntelliJ plugin\n- Neovim/Emacs LSP integration\n\n### Priority\nLow",
+    "labels": ["enhancement", "nice-to-have", "developer-experience", "ide-integration"]
+  },
+  {
+    "title": "Interactive TUI Mode",
+    "body": "### Description\n`fossil scan --interactive` - Browse markers with TUI\n\n### Details\n- Browse markers with TUI\n- Jump to files, mark as resolved\n- ncurses-based interface\n\n### Priority\nLow",
+    "labels": ["enhancement", "nice-to-have", "developer-experience"]
+  },
+  {
+    "title": "Debt Metrics and Scoring",
+    "body": "### Description\nCalculate debt metrics and scores\n\n### Details\n- Calculate \"debt score\" based on age and severity\n- Technical debt index (TDI)\n- Team leaderboards (gamification)\n\n### Priority\nLow",
+    "labels": ["enhancement", "nice-to-have", "metrics"]
+  },
+  {
+    "title": "Trend Analysis and Predictions",
+    "body": "### Description\nAnalyze trends and predict future debt growth\n\n### Details\n- Predict future debt growth\n- Identify debt hot-spots\n- Recommend refactoring targets\n\n### Priority\nLow",
+    "labels": ["enhancement", "nice-to-have", "metrics", "analytics"]
+  },
+  {
+    "title": "Debt Assignment Parsing",
+    "body": "### Description\nParse and track debt assignments\n\n### Details\n- Parse `TODO(username):` format\n- Generate per-developer reports\n- Track individual debt accountability\n\n### Priority\nLow",
+    "labels": ["enhancement", "nice-to-have", "collaboration"]
+  },
+  {
+    "title": "Code Review Integration",
+    "body": "### Description\nIntegrate with code review workflows\n\n### Details\n- Comment on pull requests\n- Suggest reviewers based on debt authorship\n- Block merges with unaddressed high-severity debt\n\n### Priority\nLow",
+    "labels": ["enhancement", "nice-to-have", "collaboration", "github-integration"]
+  },
+  {
+    "title": "Integration Tests with Real Repositories",
+    "body": "### Description\nAdd comprehensive integration tests\n\n### Details\n- Add integration tests with real repositories\n- Benchmark suite for performance regression testing\n- Fuzzing for scanner edge cases\n\n### Priority\nInfrastructure",
+    "labels": ["infrastructure", "testing"]
+  },
+  {
+    "title": "Automated Releases and Multi-Platform Binaries",
+    "body": "### Description\nAutomate release process and provide multi-platform binaries\n\n### Details\n- Automated releases with GitHub Actions\n- Multi-platform binaries (Linux, macOS, Windows)\n- Homebrew tap for easy installation\n- Cargo publish to crates.io\n\n### Priority\nInfrastructure",
+    "labels": ["infrastructure", "ci-cd", "distribution"]
+  },
+  {
+    "title": "Enhanced Documentation (Videos, Blog Posts, Talks)",
+    "body": "### Description\nCreate comprehensive documentation and educational content\n\n### Details\n- Video tutorials\n- Blog post series on technical debt management\n- Conference talk materials\n\n### Priority\nInfrastructure",
+    "labels": ["infrastructure", "documentation"]
+  },
+  {
+    "title": "Project Website with Live Demo",
+    "body": "### Description\nCreate project website with showcase and demos\n\n### Details\n- Project website with live demo\n- Showcase real-world examples\n- User testimonials\n\n### Priority\nCommunity",
+    "labels": ["community", "marketing"]
+  },
+  {
+    "title": "Plugin System and Extension API",
+    "body": "### Description\nCreate extensibility system for community contributions\n\n### Details\n- Plugin system for custom markers\n- Extension API for third-party integrations\n- Community-contributed configs and presets\n\n### Priority\nCommunity",
+    "labels": ["community", "extensibility"]
+  }
+]
