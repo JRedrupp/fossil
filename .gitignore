@@ -20,4 +20,6 @@ Thumbs.db
 *.md
 !README.md
 !TODO.md
+!MIGRATION_README.md
 *.json
+!todo_to_issues.json
